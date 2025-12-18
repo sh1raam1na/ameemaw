@@ -14,7 +14,7 @@
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/ameemaw.git
+git clone https://github.com/sh1raam1na/ameemaw.git
 cd ameemaw
 ```
 
