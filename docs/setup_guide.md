@@ -98,7 +98,7 @@ drive.mount('/content/drive')
 ### 3. Clone Repo in Colab
 
 ```python
-!git clone https://github.com/YOUR_USERNAME/ameemaw.git
+!git clone https://github.com/sh1raam1na/ameemaw.git
 %cd ameemaw
 ```
 
