@@ -1,0 +1,26 @@
+{
+  "timestamp": "2025-12-27T05:07:07.453529",
+  "gradcam": {
+    "model": "ResNet-50",
+    "target_layer": "layer4[-1]",
+    "test_accuracy": 0.8461538461538461,
+    "avg_confidence": 0.8840160441194844,
+    "avg_focus_score": 4.657324314117432
+  },
+  "shap": {
+    "model": "Logistic Regression",
+    "n_features": 102,
+    "top_features": [
+      "original_shape2D_Sphericity",
+      "original_shape2D_Elongation",
+      "original_shape2D_Perimeter",
+      "original_shape2D_MinorAxisLength",
+      "original_glrlm_RunEntropy",
+      "original_glszm_GrayLevelNonUniformityNormalized",
+      "original_shape2D_MajorAxisLength",
+      "original_ngtdm_Busyness",
+      "original_glszm_SmallAreaEmphasis",
+      "original_glrlm_LongRunLowGrayLevelEmphasis"
+    ]
+  }
+}

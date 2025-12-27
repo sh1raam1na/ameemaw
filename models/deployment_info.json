@@ -1,0 +1,32 @@
+{
+  "model": {
+    "name": "ResNet-50",
+    "file": "resnet_50_best.pth",
+    "classes": [
+      "Normal",
+      "Benign",
+      "Malignant"
+    ]
+  },
+  "nana": {
+    "api_model": "claude-3-5-haiku-20241022",
+    "fallback": "templates",
+    "config_file": "nana_config.json"
+  },
+  "modes": [
+    "learn",
+    "explain"
+  ],
+  "files_needed": [
+    "models/resnet_50_best.pth",
+    "models/nana_config.json",
+    "app.py",
+    "utils/model.py",
+    "utils/gradcam.py",
+    "utils/nana.py",
+    "requirements.txt"
+  ],
+  "env_vars": [
+    "ANTHROPIC_API_KEY"
+  ]
+}

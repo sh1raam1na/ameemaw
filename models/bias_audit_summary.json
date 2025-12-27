@@ -1,0 +1,27 @@
+{
+  "timestamp": "2025-12-27T06:24:12.697340",
+  "resnet50": {
+    "overall_accuracy": 0.8461538461538461,
+    "malignant_recall": 0.8387096774193549,
+    "brightness_bias": {
+      "Dark": 0.867,
+      "Med-Dark": 0.862,
+      "Med-Light": 0.759,
+      "Light": 0.897
+    },
+    "size_bias": {
+      "Small": 0.875,
+      "Med-Small": 0.833,
+      "Med-Large": 0.875,
+      "Large": 0.708
+    }
+  },
+  "logreg": {
+    "overall_accuracy": 0.9375,
+    "malignant_recall": 0.8
+  },
+  "recommendations": {
+    "safe_for_deployment": true,
+    "needs_quality_warning": false
+  }
+}

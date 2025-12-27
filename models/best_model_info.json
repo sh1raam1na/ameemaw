@@ -1,0 +1,12 @@
+{
+  "best_overall": "Logistic Regression",
+  "best_overall_type": "Tabular (2-class)",
+  "best_overall_f1": 0.9353864734299516,
+  "best_cnn_3class": "ResNet-50",
+  "best_cnn_3class_f1": 0.8485781904056385,
+  "best_cnn_2class": "ResNet-50",
+  "best_cnn_2class_f1": 0.8984204154951578,
+  "best_tabular": "Logistic Regression",
+  "best_tabular_f1": 0.9353864734299516,
+  "timestamp": "2025-12-23T17:42:20.631164"
+}

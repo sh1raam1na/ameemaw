@@ -136,3 +136,4 @@ reports/figures/*.svg
 # STREAMLIT
 # =============================================================================
 .streamlit/secrets.toml
+.streamlit/secrets.toml.local
