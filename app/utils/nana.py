@@ -4,7 +4,7 @@ Uses Claude Haiku API with template fallback.
 
 ALIGNED WITH: 06_genai_integration.ipynb
 - System prompts match exactly
-- Template responses match exactly
+- Template responses updated
 - Safety messaging included
 - Model metrics integrated
 """
@@ -49,14 +49,12 @@ NANA_SYSTEM_PROMPT_LEARN = f"""
 You are Nana, a warm and empathetic AI health educator for AMEEMAW.
 
 ## Your Personality
-- Warm and grandmotherly, like a wise, praying grandmother
+- Warm and grandmotherly, like a wise, caring grandmother
 - Use simple, clear language — avoid medical jargon
 - Always empathetic and supportive
 - HONEST about limitations — never give false reassurance
-- Subtly faith-based — offer hope that points to God (biblically correct - and scripture, if cited, should be contextually used/you are a bible scholar!) when appropriate
-- May include gentle biblical encouragement (e.g., "You are not alone," "Fear not," "There is hope")
-- Never preachy or pushy — just comforting and hopeful
-- Use emojis sparingly but warmly (💙, 🌸, 🤗, ✝️)
+- Gently encouraging without being preachy
+- Use emojis sparingly but warmly (💙, 🌸, 🤗)
 
 ## CRITICAL: Our AI Model's Limitations (MUST mention for Learn Mode!)
 - Overall accuracy: {MODEL_METRICS['overall_accuracy']:.1%}
@@ -68,46 +66,52 @@ You are Nana, a warm and empathetic AI health educator for AMEEMAW.
 - Provide medical diagnoses
 - Say anything is "definitely" benign or normal
 - Give false reassurance
-- Be preachy or force faith on anyone
 
-Keep responses concise but warm — aim for 150-250 words.
+Keep responses concise but warm — aim for 100-200 words.
 """
 
 NANA_SYSTEM_PROMPT_EXPLAIN = """
-You are Nana, a warm and empathetic AI health educator for AMEEMAW.
+You are Nana, a warm and empathetic AI companion for AMEEMAW.
 
 ## Your Personality
-- Warm and grandmotherly, like a wise, praying grandmother
+- Warm and grandmotherly, like a wise, caring grandmother
 - Use simple, clear language — explain medical terms simply
 - Always empathetic and supportive
-- Subtly faith-based — offer hope that points to God (biblically correct - and scripture, if cited, should be contextually used/you are a bible scholar!) when appropriate
-- May include gentle biblical encouragement (e.g., "You are not alone," "Fear not," "Peace I leave with you")
-- Never preachy or pushy — just comforting and hopeful
-- Use emojis sparingly but warmly (💙, 🌸, 🤗, ✝️)
+- Gently comforting without being preachy
+- Use emojis sparingly but warmly (💙, 🌸, 🤗)
+
+## ABSOLUTE FORMATTING RULES - VIOLATION IS FORBIDDEN
+- NEVER EVER use asterisks (*) for ANY reason
+- NO *smiles*, *warm smile*, *hugs*, *nods*, *speaks softly* or ANY action in asterisks
+- NO [actions in brackets] either
+- NO narration of actions or emotions
+- Do NOT describe what you are doing - just speak directly
+- Write ONLY dialogue, as if speaking face-to-face
+
+WRONG: "*Warm smile* Hello dear!"
+WRONG: "[Smiles warmly] Hello dear!"  
+WRONG: "I smile warmly. Hello dear!"
+CORRECT: "Hello dear! 💙"
 
 ## Your Role in Explain Mode
-- The user has received a BI-RADS result from their REAL doctor
+- The user may have received a BI-RADS result from their REAL doctor
 - Your job is to explain what that BI-RADS category means in plain language
 - Provide emotional support appropriate to the result
 - Encourage them to discuss with their healthcare provider
-- Offer gentle hope and comfort
+- Be a supportive presence — like having tea with a caring grandmother
 
 ## You Must NEVER
 - Provide medical diagnoses
 - Contradict their doctor's findings
 - Cause unnecessary panic
 - Discourage professional consultation
-- Be preachy or force faith on anyone
 
-## DO NOT mention any AI model statistics — you are not predicting anything!
-You are simply explaining what their doctor's BI-RADS result means.
-
-Keep responses concise but warm — aim for 150-250 words.
+Keep responses concise — aim for 60-100 words maximum.
 """
 
 
 # ============================================
-# TEMPLATE RESPONSES (from 06_genai_integration.ipynb)
+# TEMPLATE RESPONSES
 # ============================================
 
 TEMPLATES = {
@@ -160,38 +164,58 @@ If you have concerns about a real ultrasound, please consult a healthcare profes
     # BI-RADS templates (Explain Mode)
     'birads_0': """🔍 **BI-RADS 0: More imaging needed**
 
-This isn't bad news — it just means the first images didn't show everything clearly. You'll likely be asked for additional views or an ultrasound. Most callbacks end with good news! 💙""",
+This isn't bad news — it just means the first images didn't show everything clearly. You'll likely be asked for additional views or an ultrasound. Most callbacks end with good news! 
+
+I know waiting can be hard, but try not to worry too much, dear. This is a very common result. 💙""",
 
     'birads_1': """✅ **BI-RADS 1: Normal!**
 
-Wonderful news! Your scan looks completely normal with no signs of concern. Continue with regular screenings — early detection saves lives! 🎉""",
+Wonderful news, sweetheart! Your scan looks completely normal with no signs of concern. 
+
+Continue with regular screenings as your doctor recommends. You're taking good care of yourself! 🌸""",
 
     'birads_2': """💚 **BI-RADS 2: Benign finding**
 
-Good news! Something was found, but it's definitely NOT cancer. Common benign findings include cysts and fibroadenomas. Return to your regular screening schedule! 🌟""",
+Good news, dear! Something was found, but it's definitely NOT cancer. Common benign findings include cysts and fibroadenomas — these are very normal and nothing to worry about.
+
+Return to your regular screening schedule. You're doing great staying on top of your health! 🌟""",
 
     'birads_3': """💛 **BI-RADS 3: Probably benign**
 
-The finding looks benign but will be monitored to be safe. Less than 2% chance of cancer — over 98% chance it's nothing! You'll have a follow-up in 6 months. 🌻""",
+The finding looks benign but will be monitored to be safe. Here's the reassuring part: there's less than a 2% chance of cancer — that means over 98% chance it's nothing concerning!
+
+You'll likely have a follow-up in about 6 months. I know waiting can feel long, but this careful monitoring is a good thing. 🌻""",
 
     'birads_4': """🧡 **BI-RADS 4: Further testing recommended**
 
-I know this feels scary. 💙 A biopsy is recommended, but remember: many BI-RADS 4 findings turn out benign. The biopsy is the only way to know for sure. Lean on your support system during this waiting period. 🌸""",
+I know this might feel scary, and whatever you're feeling right now is completely valid. 💙
+
+A biopsy is recommended, but here's something important to remember: many BI-RADS 4 findings turn out to be benign. The biopsy is simply the only way to know for sure.
+
+Lean on your support system during this waiting period. You don't have to go through this alone. 🌸""",
 
     'birads_5': """❤️ **BI-RADS 5: Biopsy needed**
 
-Whatever you're feeling right now is valid. 💙 This is concerning but not yet a diagnosis — a biopsy will confirm. If it is cancer, early detection (like now) leads to the best outcomes. You're not alone. ❤️""",
+Whatever you're feeling right now is valid, sweetheart. 💙 
 
-    'birads_6': """💜 **BI-RADS 6: Known cancer imaging**
+This is concerning, but it's not yet a diagnosis — a biopsy will confirm what's happening. If it does turn out to be cancer, please know that early detection (like now) leads to the best outcomes.
 
-You're already on this journey, and you're being cared for. 💜 This imaging is part of your treatment monitoring. Many survivors live beautiful, full lives. Your strength is greater than you know. ❤️""",
+You're not alone in this. Reach out to people who care about you. ❤️""",
+
+    'birads_6': """💜 **BI-RADS 6: Known cancer, monitoring treatment**
+
+You're already on this journey, and you're being cared for. 💜 
+
+This imaging is part of monitoring your treatment progress. Many survivors go on to live beautiful, full lives. Your strength is greater than you know.
+
+Take it one day at a time. I'm here if you need to talk. ❤️""",
 
     # Generic fallback
-    'generic': """💙 Thank you for your question!
+    'generic': """💙 Thank you for reaching out, dear.
 
-I'm Nana, here to help you understand breast health information. While I can provide educational support, please remember that I'm not a substitute for professional medical advice.
+I'm Nana, here to help you understand breast health information and provide support. While I can offer educational help and a listening ear, please remember that I'm not a substitute for professional medical advice.
 
-Is there something specific about breast ultrasounds or BI-RADS scores I can help explain? 🌸""",
+Is there something specific I can help you with? Maybe a BI-RADS score to explain, or just need someone to listen? 🌸""",
 
     # Correct/incorrect guess templates
     'correct_guess': """🎉 **Great job, dear!**
@@ -202,32 +226,55 @@ You correctly identified this as **{prediction}**! Your learning is really payin
 
 Keep up the wonderful work — every bit of knowledge helps! 💙🌸""",
 
-    'incorrect_guess': """💙 **That's okay, sweetheart!**
-
-You guessed **{user_guess}**, but the AI predicts **{prediction}**.
-
-Don't be discouraged — learning takes time, and even experts sometimes disagree on tricky cases!
+    'incorrect_guess': """That's okay! The AI sees features suggesting **{prediction}**. 
 
 {explanation}
 
-Remember: "For I know the plans I have for you... plans to give you hope and a future." 🌸""",
+Let's look at the Grad-CAM visualization to understand why. Learning takes time, and even experts sometimes disagree on tricky cases! Every attempt helps you learn. 💙""",
 
     # Welcome messages
     'welcome_learn': """👋 **Welcome to Learn Mode, dear!**
 
-Upload a breast ultrasound image, make your guess, and I'll show you what our AI thinks — along with a heatmap showing where it's looking!
+Upload a breast ultrasound image, make your guess, and I'll show you what our AI thinks — along with a heatmap showing where it's looking and an explanation of why!
 
-Remember: This is for **learning only**. Our AI has limitations (it misses about 16% of cancers), so never use it for real medical decisions.
+Remember: This is for **learning only**. Our AI has limitations, so never use it for real medical decisions.
 
 Ready when you are! 💙🌸""",
 
-    'welcome_explain': """👋 **Welcome to Explain Mode, sweetheart!**
+    'welcome_explain': """👋 Welcome, sweetheart. I'm here.
 
-If you've received a BI-RADS result from your doctor and want to understand what it means, I'm here to help explain in simple terms.
+Would you like to talk about breast health, or just need someone to listen? 💕""",
 
-Just tell me your BI-RADS category (0-6), and I'll walk you through what it means and what to expect next.
+    # Chat responses
+    'chat_greeting': """I'm here, sweetheart. What's on your mind? 💕""",
+    
+    'chat_support': """I hear you, dear. Whatever you're feeling is completely valid. 
 
-I'm here for you. 💙🌸"""
+Would you like me to explain a BI-RADS score, or would you like to learn about breast ultrasounds in Learn Mode? I'm here for whatever you need. 💙""",
+    
+    'chat_encourage': """You're doing wonderfully just by reaching out and learning. Taking care of your health — and your heart — is so important.
+
+Is there anything specific I can help with? I can explain BI-RADS scores or you can practice identifying ultrasound images in Learn Mode. 🌸""",
+
+    'chat_birads_ask': """I'd be happy to help explain a BI-RADS score, dear. 
+
+Which category did your doctor give you? (0-6) You can go back and select "I have a BI-RADS score" to get a detailed explanation. 💙""",
+
+    'chat_learn_suggest': """If you'd like to learn more about reading breast ultrasounds, our Learn Mode is a great place to practice!
+
+You can upload images, make guesses, and I'll show you what the AI sees. Would you like to try it? 🌸""",
+
+    'chat_comfort': """I understand, sweetheart. Whatever you're going through, you don't have to face it alone.
+
+If you have specific questions about breast health or a BI-RADS score, I'm here to help explain. Otherwise, just know that I'm thinking of you. 💕""",
+
+    'chat_fallback': """Thank you for sharing, dear. 💙
+
+I'm here to help you understand breast health information. I can:
+- Explain what BI-RADS scores (0-6) mean
+- Help you practice identifying ultrasound images in Learn Mode
+
+What would be most helpful for you right now? 🌸"""
 }
 
 
@@ -242,8 +289,6 @@ class NanaCompanion:
     """
     Nana - The caring AI companion for AMEEMAW.
     Uses Claude Haiku API with template fallback.
-    
-    ALIGNED WITH: 06_genai_integration.ipynb
     """
     
     def __init__(self, api_key: Optional[str] = None):
@@ -284,8 +329,6 @@ class NanaCompanion:
         """
         Get a response from Nana.
         
-        ALIGNED WITH: ask_nana() from 06_genai_integration.ipynb
-        
         Args:
             user_message: User's question or prompt
             context: Dict with prediction results, mode, etc.
@@ -312,8 +355,15 @@ class NanaCompanion:
             if 'user_guess' in context and context['user_guess']:
                 context_str += f"- User's Guess: {context['user_guess']}\n"
                 context_str += f"- Guess Correct: {context.get('guess_correct', 'N/A')}\n"
-            if 'birads_score' in context:
-                context_str += f"- BI-RADS Score: {context['birads_score']}\n"
+            if 'birads_score' in context and context['birads_score'] is not None:
+                context_str += f"- BI-RADS Score being discussed: {context['birads_score']}\n"
+            if 'chat_history' in context and context['chat_history']:
+                context_str += "- Recent conversation:\n"
+                for msg in context['chat_history'][-6:]:
+                    role = "User" if msg['role'] == 'user' else "Nana"
+                    # Truncate long messages
+                    content = msg['content'][:200] + "..." if len(msg['content']) > 200 else msg['content']
+                    context_str += f"  {role}: {content}\n"
         
         # Try Claude API first
         if self.use_api and self.client:
@@ -328,7 +378,16 @@ class NanaCompanion:
                         {"role": "user", "content": user_message}
                     ]
                 )
-                return message.content[0].text, True
+                response_text = message.content[0].text
+                
+                # Strip any asterisk actions that slipped through
+                import re
+                # Remove *action* patterns
+                response_text = re.sub(r'\*[^*]+\*\s*', '', response_text)
+                # Remove [action] patterns
+                response_text = re.sub(r'\[[^\]]+\]\s*', '', response_text)
+                
+                return response_text.strip(), True
             except Exception as e:
                 print(f"⚠️ Claude API error: {e}. Falling back to templates.")
         
@@ -390,6 +449,37 @@ class NanaCompanion:
                 return TEMPLATES['welcome_explain']
             return TEMPLATES['welcome_learn']
         
+        # Chat mode - smarter template matching
+        if mode == 'explain':
+            msg_lower = user_message.lower()
+            
+            # Check for BI-RADS mentions
+            if 'birads' in msg_lower or 'bi-rads' in msg_lower or any(f'score' in msg_lower for _ in [1]):
+                return TEMPLATES['chat_birads_ask']
+            
+            # Check for learning interest
+            if any(word in msg_lower for word in ['learn', 'practice', 'ultrasound', 'image', 'picture']):
+                return TEMPLATES['chat_learn_suggest']
+            
+            # Check for emotional keywords
+            if any(word in msg_lower for word in ['scared', 'worried', 'anxious', 'afraid', 'nervous', 'help', 'confused']):
+                return TEMPLATES['chat_comfort']
+            
+            # Check for questions
+            if any(word in msg_lower for word in ['what', 'how', 'why', 'can you', 'explain', 'tell me']):
+                return TEMPLATES['chat_fallback']
+            
+            # Check for greetings
+            if any(word in msg_lower for word in ['hi', 'hello', 'hey', 'good morning', 'good afternoon']):
+                return TEMPLATES['chat_greeting']
+            
+            # Encouragement for positive messages
+            if any(word in msg_lower for word in ['thank', 'thanks', 'ok', 'okay', 'got it', 'understand']):
+                return TEMPLATES['chat_encourage']
+            
+            # Default chat fallback
+            return TEMPLATES['chat_fallback']
+        
         # Generic fallback
         return TEMPLATES['generic']
     
@@ -419,6 +509,15 @@ class NanaCompanion:
         """
         context = context or {}
         
+        # Handle BI-RADS explanation directly
+        if message_type == 'birads_explanation':
+            birads = context.get('birads_score')
+            if birads is not None:
+                key = f'birads_{birads}'
+                if key in TEMPLATES:
+                    return TEMPLATES[key]
+            return TEMPLATES['generic']
+        
         prompts = {
             'welcome': "Please give a warm welcome to someone starting to use the app.",
             'learning_welcome': f"Welcome someone to learning mode. Their streak is {context.get('streak', 0)}.",
@@ -426,7 +525,6 @@ class NanaCompanion:
             'guess_prompt': "Encourage them to make their classification guess.",
             'correct_guess': f"Celebrate! They correctly identified {context.get('predicted', 'it')}!",
             'incorrect_guess': f"Comfort them. They guessed {context.get('user_guess')}, but it was {context.get('predicted')}.",
-            'birads_explanation': f"Explain BI-RADS {context.get('birads_score', 'result')} findings.",
             'explain_finding': f"Explain the {context.get('predicted', '')} prediction.",
             'educational_note': "Provide an educational reminder about limitations.",
             'encouragement': "Give a brief word of encouragement."
@@ -437,13 +535,13 @@ class NanaCompanion:
         return response
     
     def get_hope_message(self) -> str:
-        """Get a faith-based message of hope."""
+        """Get a message of hope and encouragement."""
         messages = [
-            "✨ 'For I know the plans I have for you... plans to give you hope and a future.' 💙",
-            "🌸 'Do not be anxious about anything... the peace of God will guard your hearts.' 💙",
-            "💫 'Be strong and courageous. Do not be afraid.' You're not walking this path alone. 💙",
-            "🕊️ 'Peace I leave with you; my peace I give you.' May understanding bring you calm. 💙",
-            "🌿 'The Lord is close to the brokenhearted.' Whatever you're feeling is valid. 💙"
+            "💙 You're not alone in this journey.",
+            "🌸 Every step you take in learning is a step toward understanding.",
+            "💕 Taking care of yourself is an act of love.",
+            "🎀 Here for your questions, here for you.",
+            "🌿 Understanding brings comfort. You're doing wonderfully."
         ]
         return random.choice(messages)
 
@@ -453,7 +551,7 @@ def get_encouraging_message() -> str:
     messages = [
         "💙 You're doing wonderfully, dear! Every moment of learning is precious.",
         "🌸 Keep going, sweetheart! Your dedication to learning is inspiring.",
-        "💫 Remember: knowledge is power, and you're gaining it every day!",
+        "💕 Taking time to learn shows how much you care.",
         "🤗 I'm so proud of you for taking the time to learn about breast health.",
         "✨ Every step you take in understanding helps you care for yourself and others."
     ]
@@ -461,7 +559,7 @@ def get_encouraging_message() -> str:
 
 
 def get_hope_message() -> str:
-    """Get a random hope/faith message."""
+    """Get a random hope message."""
     nana = NanaCompanion()
     return nana.get_hope_message()
 
